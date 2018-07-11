@@ -40,12 +40,13 @@ struct Properties getProperties(int number) {
 
 
 struct RepeatsData {
-	int repeats[7][7], repeatsCount[7], allUnique[7], uniqueCount, max;
+	int repeats[7][7], repeatsCount[7], *all, allUnique[7], uniqueCount, max;
 };
 
 
 struct RepeatsData getRepeats(int *numbers, int count) {
 	struct RepeatsData repeatsData;
+	repeatsData.all = numbers;
 	for (int i = 0; i < 7; i++) {
 		repeatsData.repeatsCount[i] = 0;
 	}
@@ -108,7 +109,14 @@ struct Repetitions getRepetitions(int *numbers, int count) {
 }
 
 
-int getStraightIndex(int *numbers, int count) {
+struct StraightStuff {
+	int index, *numbers, count;
+};
+
+
+struct StraightStuff getStraightStuff(int *numbers, int count) {
+	struct StraightStuff straightStuff;
+
 	if (numbers[count - 1] == 14) {
 		int newNumbers[8];
 		newNumbers[0] = 1;
@@ -119,12 +127,16 @@ int getStraightIndex(int *numbers, int count) {
 		count++;
 	}
 
+	straightStuff.numbers = numbers;
+	straightStuff.count = count;
+
 	int rank = 1;
 	for (int i = count - 1; i > 0; i--) {
 		if (numbers[i] - numbers[i - 1] == 1) {
 			rank++;
 			if (rank == 5) {
-				return i - 1;
+				straightStuff.index = i - 1;
+				return straightStuff;
 			}
 		}
 		else {
@@ -132,7 +144,27 @@ int getStraightIndex(int *numbers, int count) {
 		}
 	}
 
-	return -1;
+	straightStuff.index = -1;
+	return straightStuff;
+}
+
+
+struct FilteredCards {
+	int items[7], count;
+};
+
+
+struct FilteredCards getWeightsBySuit(int suit, int *allWeights, int *allSuits, int count) {
+	struct FilteredCards filteredCards;
+	filteredCards.count = 0;
+	for (int i = 0; i < count; i++) {
+		if (allSuits[i] == suit) {
+			filteredCards.items[filteredCards.count] = allWeights[i];
+			filteredCards.count++;
+		}
+	}
+
+	return filteredCards;
 }
 
 
@@ -155,11 +187,41 @@ int finder(int *numbers, int count) {
 			value = 7;
 		}
 		else {
-			int straightIndex = getStraightIndex(repetitions.weights.allUnique, repetitions.weights.uniqueCount);
-			printf("%d\n", straightIndex);
-			//for (int i = 0; i < repetitions.weights.uniqueCount; i++) {
-			//	printf("%d, ", repetitions.weights.allUnique[i]);
-			//}
+			struct StraightStuff straightStuff = getStraightStuff(repetitions.weights.allUnique, repetitions.weights.uniqueCount);
+			//printf("%d\n", straightStuff.index);
+			if (straightStuff.index > -1) {
+				printf("straight");
+				value = 5;
+			}
+			else if (repetitions.weights.max == 3) {
+				printf("three of a kind");
+				value = 4;
+			}
+			else if (repetitions.weights.repeatsCount[1] == 2) {
+				printf("two pairs");
+				value = 3;
+			}
+			else if (repetitions.weights.max == 2) {
+				printf("one pair");
+				value = 2;
+			}
+			else {
+				printf("high card");
+				value = 1;
+			}
+		}
+	}
+	else {
+		struct FilteredCards filteredCards = getWeightsBySuit(
+			repetitions.suits.repeats[repetitions.suits.max - 1][0], repetitions.weights.all, repetitions.suits.all, count);
+		struct StraightStuff straightStuff = getStraightStuff(filteredCards.items, filteredCards.count);
+		if (straightStuff.index > -1) {
+			printf("straight flush");
+			value = 9;
+		}
+		else {
+			printf("flush");
+			value = 6;
 		}
 	}
 
@@ -168,8 +230,15 @@ int finder(int *numbers, int count) {
 
 
 int main(void) {
-	int nmb[] = { 53, 74, 83, 141, 91, 112, 101 };
-	//int nmb[] = { 22, 32, 42, 52, 62, 72, 82 };
+	//int nmb[] = { 131, 74, 121, 141, 91, 111, 101 }; // straight flush
+	//int nmb[] = { 131, 74, 32, 71, 72, 103, 73 }; // four of a kind
+	//int nmb[] = { 123, 52, 24, 124, 53, 51, 112 }; // full house
+	//int nmb[] = { 44, 84, 132, 94, 31, 74, 114 }; // flush
+	//int nmb[] = { 53, 74, 83, 141, 91, 112, 101 }; // straight
+	//int nmb[] = { 61, 104, 124, 101, 103, 143, 92 }; // three of a kind
+	//int nmb[] = { 82, 123, 72, 54, 71, 23, 83 }; // two pairs
+	//int nmb[] = { 64, 142, 114, 144, 31, 93, 122 }; // one pair
+	int nmb[] = { 43, 124, 62, 114, 51, 103, 83 }; // high card
 	finder(nmb, 7);
 	return 0;
 }
