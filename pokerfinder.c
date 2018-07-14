@@ -109,14 +109,7 @@ struct Repetitions getRepetitions(int *numbers, int count) {
 }
 
 
-struct StraightStuff {
-	int index, *numbers, count;
-};
-
-
-struct StraightStuff getStraightStuff(int *numbers, int count) {
-	struct StraightStuff straightStuff;
-
+int getStraightMax(int *numbers, int count) {
 	if (numbers[count - 1] == 14) {
 		int newNumbers[8];
 		newNumbers[0] = 1;
@@ -127,16 +120,12 @@ struct StraightStuff getStraightStuff(int *numbers, int count) {
 		count++;
 	}
 
-	straightStuff.numbers = numbers;
-	straightStuff.count = count;
-
 	int rank = 1;
 	for (int i = count - 1; i > 0; i--) {
 		if (numbers[i] - numbers[i - 1] == 1) {
 			rank++;
 			if (rank == 5) {
-				straightStuff.index = i - 1;
-				return straightStuff;
+				return numbers[i + 3];
 			}
 		}
 		else {
@@ -144,8 +133,7 @@ struct StraightStuff getStraightStuff(int *numbers, int count) {
 		}
 	}
 
-	straightStuff.index = -1;
-	return straightStuff;
+	return -1;
 }
 
 
@@ -168,7 +156,12 @@ struct FilteredCards getWeightsBySuit(int suit, int *allWeights, int *allSuits, 
 }
 
 
-int finder(int *numbers, int count) {
+struct Combo {
+	int type, items[5], itemsCount;
+};
+
+
+struct Combo comboFinder(int *numbers, int count) {
 	int value;
 	int *sortedNumbers = sortNumbers(numbers, count);
 	//for (int i = 0; i < count; i++) {
@@ -176,56 +169,125 @@ int finder(int *numbers, int count) {
 	//}
 	//printf("\n");
 	struct Repetitions repetitions = getRepetitions(sortedNumbers, count);
+	struct Combo combo;
 
 	if (repetitions.suits.max < 5) {
 		if (repetitions.weights.max == 4) {
-			printf("four of a kind");
-			value = 8;
-		}
-		else if (repetitions.weights.max == 3 && (repetitions.weights.repeatsCount[1] > 0 || repetitions.weights.repeatsCount[2] == 2)) {
-			printf("full house");
-			value = 7;
-		}
-		else {
-			struct StraightStuff straightStuff = getStraightStuff(repetitions.weights.allUnique, repetitions.weights.uniqueCount);
-			//printf("%d\n", straightStuff.index);
-			if (straightStuff.index > -1) {
-				printf("straight");
-				value = 5;
-			}
-			else if (repetitions.weights.max == 3) {
-				printf("three of a kind");
-				value = 4;
-			}
-			else if (repetitions.weights.repeatsCount[1] == 2) {
-				printf("two pairs");
-				value = 3;
-			}
-			else if (repetitions.weights.max == 2) {
-				printf("one pair");
-				value = 2;
+			printf("four of a kind\n");
+			combo.type = 8;
+			combo.items[0] = repetitions.weights.repeats[3][0];
+			if (count == 4) {
+				combo.itemsCount = 1;
 			}
 			else {
-				printf("high card");
-				value = 1;
+				combo.itemsCount = 2;
+				combo.items[1] = repetitions.weights.repeats[0][count - 5];
+			}
+		}
+		else if (repetitions.weights.max == 3 && (repetitions.weights.repeatsCount[1] > 0 || repetitions.weights.repeatsCount[2] == 2)) {
+			printf("full house\n");
+			combo.type = 7;
+			combo.itemsCount = 2;
+			if (repetitions.weights.repeatsCount[2] == 2) {
+				combo.items[0] = repetitions.weights.repeats[2][1];
+				combo.items[1] = repetitions.weights.repeats[2][0];
+			}
+			else {
+				combo.items[0] = repetitions.weights.repeats[2][0];
+				combo.items[1] = repetitions.weights.repeats[1][repetitions.weights.repeatsCount[1] - 1];
+			}
+		}
+		else {
+			int straightMax = getStraightMax(repetitions.weights.allUnique, repetitions.weights.uniqueCount);
+			//printf("%d\n", straightMax);
+			if (straightMax != -1) {
+				printf("straight\n");
+				combo.type = 5;
+				combo.itemsCount = 1;
+				combo.items[0] = straightMax;
+			}
+			else if (repetitions.weights.max == 3) {
+				printf("three of a kind\n");
+				combo.type = 4;
+				if (count < 5) {
+					combo.itemsCount = count - 2;
+				}
+				else {
+					combo.itemsCount = 3;
+				}
+				combo.items[0] = repetitions.weights.repeats[2][0];
+				for (int i = 1; i < combo.itemsCount; i++) {
+					combo.items[i] = repetitions.weights.repeats[0][count - i - 3];
+				}
+			}
+			else if (repetitions.weights.repeatsCount[1] == 2) {
+				printf("two pairs\n");
+				combo.type = 3;
+				combo.items[0] = repetitions.weights.repeats[1][1];
+				combo.items[1] = repetitions.weights.repeats[1][0];
+				if (count == 4) {
+					combo.itemsCount = 2;
+				}
+				else {
+					combo.itemsCount = 3;
+					combo.items[2] = repetitions.weights.repeats[0][count - 5];
+				}
+			}
+			else if (repetitions.weights.max == 2) {
+				printf("one pair\n");
+				combo.type = 2;
+				if (count < 5) {
+					combo.itemsCount = count - 1;
+				}
+				else {
+					combo.itemsCount = 4;
+				}
+				combo.items[0] = repetitions.weights.repeats[1][0];
+				for (int i = 1; i < combo.itemsCount; i++) {
+					combo.items[i] = repetitions.weights.repeats[0][count - i - 2];
+				}
+			}
+			else {
+				printf("high card\n");
+				combo.type = 1;
+				if (count < 5) {
+					combo.itemsCount = count;
+				}
+				else {
+					combo.itemsCount = 5;
+				}
+				for (int i = 0; i < combo.itemsCount; i++) {
+					combo.items[i] = repetitions.weights.repeats[0][count - i - 1];
+				}
 			}
 		}
 	}
 	else {
 		struct FilteredCards filteredCards = getWeightsBySuit(
 			repetitions.suits.repeats[repetitions.suits.max - 1][0], repetitions.weights.all, repetitions.suits.all, count);
-		struct StraightStuff straightStuff = getStraightStuff(filteredCards.items, filteredCards.count);
-		if (straightStuff.index > -1) {
+		int straightMax = getStraightMax(filteredCards.items, filteredCards.count);
+		if (straightMax != - 1) {
 			printf("straight flush");
-			value = 9;
+			combo.type = 9;
+			combo.itemsCount = 1;
+			combo.items[0] = straightMax;
 		}
 		else {
 			printf("flush");
-			value = 6;
+			combo.type = 6;
+			if (filteredCards.count < 5) {
+				combo.itemsCount = filteredCards.count;
+			}
+			else {
+				combo.itemsCount = 5;
+			}
+			for (int i = 0; i < combo.itemsCount; i++) {
+				combo.items[i] = filteredCards.items[filteredCards.count - i - 1];
+			}
 		}
 	}
 
-	return 0;
+	return combo;
 }
 
 
@@ -234,11 +296,15 @@ int main(void) {
 	//int nmb[] = { 131, 74, 32, 71, 72, 103, 73 }; // four of a kind
 	//int nmb[] = { 123, 52, 24, 124, 53, 51, 112 }; // full house
 	//int nmb[] = { 44, 84, 132, 94, 31, 74, 114 }; // flush
-	//int nmb[] = { 53, 74, 83, 141, 91, 112, 101 }; // straight
+	int nmb[] = { 53, 74, 83, 141, 91, 112, 101 }; // straight
 	//int nmb[] = { 61, 104, 124, 101, 103, 143, 92 }; // three of a kind
 	//int nmb[] = { 82, 123, 72, 54, 71, 23, 83 }; // two pairs
 	//int nmb[] = { 64, 142, 114, 144, 31, 93, 122 }; // one pair
-	int nmb[] = { 43, 124, 62, 114, 51, 103, 83 }; // high card
-	finder(nmb, 7);
+	//int nmb[] = { 43, 124, 62, 114, 51, 103, 83 }; // high card
+	struct Combo combo = comboFinder(nmb, 7);
+	for (int i = 0; i < combo.itemsCount; i++) {
+		printf("%d, ", combo.items[i]);
+	}
+	printf("\n");
 	return 0;
 }
