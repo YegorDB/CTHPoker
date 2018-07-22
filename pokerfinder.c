@@ -291,20 +291,45 @@ struct Combo comboFinder(int *numbers, int count) {
 }
 
 
-int main(void) {
-	//int nmb[] = { 131, 74, 121, 141, 91, 111, 101 }; // straight flush
-	//int nmb[] = { 131, 74, 32, 71, 72, 103, 73 }; // four of a kind
-	//int nmb[] = { 123, 52, 24, 124, 53, 51, 112 }; // full house
-	//int nmb[] = { 44, 84, 132, 94, 31, 74, 114 }; // flush
-	int nmb[] = { 53, 74, 83, 141, 91, 112, 101 }; // straight
-	//int nmb[] = { 61, 104, 124, 101, 103, 143, 92 }; // three of a kind
-	//int nmb[] = { 82, 123, 72, 54, 71, 23, 83 }; // two pairs
-	//int nmb[] = { 64, 142, 114, 144, 31, 93, 122 }; // one pair
-	//int nmb[] = { 43, 124, 62, 114, 51, 103, 83 }; // high card
-	struct Combo combo = comboFinder(nmb, 7);
-	for (int i = 0; i < combo.itemsCount; i++) {
-		printf("%d, ", combo.items[i]);
-	}
-	printf("\n");
-	return 0;
+PyObject* cfinder(PyObject* self, PyObject* args) {
+    PyObject * cardsList;
+    PyArg_ParseTuple(args, "O", &cardsList);
+    int n = PyList_Size(cardsList), cardsArray[7];
+
+    for (int i = 0; i < n; i++) {
+        int card = PyLong_AsSsize_t(PyList_GetItem(cardsList, i));
+        cardsArray[i] = card;
+    }
+
+    struct Combo combo = comboFinder(cardsArray, n);
+
+    PyObject* result = PyList_New(combo.itemsCount + 1);
+    PyList_SetItem(result, 0, Py_BuildValue("i", combo.type));
+
+    for (int i = 1; i < combo.itemsCount + 1; i++) {
+        PyList_SetItem(result, i, Py_BuildValue("i", combo.items[i - 1]));
+    }
+
+    return result;
+}
+
+
+static PyMethodDef methods[] = {
+    {"cfinder", cfinder, METH_VARARGS, "Combination finder."},
+    {NULL, NULL, 0, NULL}
+};
+
+
+static struct PyModuleDef definition = {
+    PyModuleDef_HEAD_INIT,
+    "cthpoker",
+    "Texas Hold'em poker combination finder by C code.",
+    -1,
+    methods
+};
+
+
+PyMODINIT_FUNC PyInit_cthpoker(void) {
+    Py_Initialize();
+    return PyModule_Create(&definition);
 }
