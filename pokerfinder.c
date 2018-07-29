@@ -1,7 +1,7 @@
-#include <stdio.h>
+#include <Python.h>
 
 
-int * sortNumbers(int *numbers, int count) {
+int * sortCards(int *numbers, int count) {
 	static int result[7];
 	result[0] = numbers[0];
 	for (int i = 1; i < count; i++) {
@@ -40,13 +40,12 @@ struct Properties getProperties(int number) {
 
 
 struct RepeatsData {
-	int repeats[7][7], repeatsCount[7], *all, allUnique[7], uniqueCount, max;
+	int repeats[7][7], repeatsCount[7], all[7], allUnique[7], uniqueCount, max;
 };
 
 
 struct RepeatsData getRepeats(int *numbers, int count) {
 	struct RepeatsData repeatsData;
-	repeatsData.all = numbers;
 	for (int i = 0; i < 7; i++) {
 		repeatsData.repeatsCount[i] = 0;
 	}
@@ -54,6 +53,7 @@ struct RepeatsData getRepeats(int *numbers, int count) {
 	repeatsData.uniqueCount = 0;
 	int newNumbers[7] = { 1, 1, 1, 1, 1, 1, 1 };
 	for (int i = 0; i < count; i++) {
+		repeatsData.all[i] = numbers[i];
 		if (newNumbers[i] == 1) {
 			repeatsData.allUnique[repeatsData.uniqueCount] = numbers[i];
 			repeatsData.uniqueCount++;
@@ -90,21 +90,7 @@ struct Repetitions getRepetitions(int *numbers, int count) {
 	}
 	repetitions.weights = getRepeats(weights, count);
 	repetitions.suits = getRepeats(suits, count);
-	//for (int i = 0; i < count; i++) {
-	//	printf("number: %d, weight: %d, suit: %d\n", numbers[i], weights[i], suits[i]);
-	//}
-	//for (int i = 0; i < count; i++) {
-	//	printf("%d weight repeat count %d: ", i + 1, repetitions.weights.repeatsCount[i]);
-	//	for (int j = 0; j < repetitions.weights.repeatsCount[i]; j++) {
-	//		printf("%d, ", repetitions.weights.repeats[i][j]);
-	//	}
-	//	printf("\n");
-	//	printf("%d suit repeat count %d: ", i + 1, repetitions.suits.repeatsCount[i]);
-	//	for (int j = 0; j < repetitions.suits.repeatsCount[i]; j++) {
-	//		printf("%d, ", repetitions.suits.repeats[i][j]);
-	//	}
-	//	printf("\n");
-	//}
+
 	return repetitions;
 }
 
@@ -161,14 +147,7 @@ struct Combo {
 };
 
 
-struct Combo comboFinder(int *numbers, int count) {
-	int value;
-	int *sortedNumbers = sortNumbers(numbers, count);
-	//for (int i = 0; i < count; i++) {
-	//	printf("%d, ", sortedNumbers[i]);
-	//}
-	//printf("\n");
-	struct Repetitions repetitions = getRepetitions(sortedNumbers, count);
+struct Combo comboGetter(struct Repetitions repetitions, int count) {
 	struct Combo combo;
 
 	if (repetitions.suits.max < 5) {
@@ -199,7 +178,6 @@ struct Combo comboFinder(int *numbers, int count) {
 		}
 		else {
 			int straightMax = getStraightMax(repetitions.weights.allUnique, repetitions.weights.uniqueCount);
-			//printf("%d\n", straightMax);
 			if (straightMax != -1) {
 				printf("straight\n");
 				combo.type = 5;
@@ -267,13 +245,13 @@ struct Combo comboFinder(int *numbers, int count) {
 			repetitions.suits.repeats[repetitions.suits.max - 1][0], repetitions.weights.all, repetitions.suits.all, count);
 		int straightMax = getStraightMax(filteredCards.items, filteredCards.count);
 		if (straightMax != - 1) {
-			printf("straight flush");
+			printf("straight flush\n");
 			combo.type = 9;
 			combo.itemsCount = 1;
 			combo.items[0] = straightMax;
 		}
 		else {
-			printf("flush");
+			printf("flush\n");
 			combo.type = 6;
 			if (filteredCards.count < 5) {
 				combo.itemsCount = filteredCards.count;
@@ -288,6 +266,86 @@ struct Combo comboFinder(int *numbers, int count) {
 	}
 
 	return combo;
+}
+
+
+struct Combo comboFinder(int *cards, int count) {
+	int *sortedCards = sortCards(cards, count);
+	struct Repetitions repetitions = getRepetitions(sortedCards, count);
+	struct Combo combo = comboGetter(repetitions, count);
+
+	return combo;
+}
+
+
+int * cardsFromRatio(int *ratioCards, int count) {
+	static int cards[7];
+	for (int i = 0; i < count; i++) {
+		cards[i] = ratioCards[i] - ((int)(ratioCards[i] / 1000)) * 1000;
+	}
+
+	return cards;
+}
+
+
+int * getInHandCards(int *ratioCards, int count) {
+	static int result[2], inCount = 0;
+	for (int i = 0; i < count; i++) {
+		if ((int)(ratioCards[i] / 1000) == 1) {
+			result[inCount] = ratioCards[i] - ((int)(ratioCards[i] / 1000)) * 1000;
+			inCount++;
+			if (inCount == 2) {
+				break;
+			}
+		}
+	}
+
+	return result;
+}
+
+
+struct RatioCombo {
+	struct Combo value;
+	int kind;
+};
+
+
+struct RatioCombo ratioComboFinder(int *ratioCards, int count) {
+	struct RatioCombo ratioCombo;
+	ratioCombo.kind = 0;
+	int *cards = cardsFromRatio(ratioCards, count);
+	int *sortedCards = sortCards(cards, count);
+	struct Repetitions repetitions = getRepetitions(sortedCards, count);
+	ratioCombo.value = comboGetter(repetitions, count);
+
+	int *inHandCards = getInHandCards(ratioCards, count);
+
+	if (ratioCombo.value.type == 9) {
+		int suit = repetitions.suits.repeats[repetitions.suits.max - 1][0];
+		for (int weight = ratioCombo.value.items[0]; weight > ratioCombo.value.items[0] - 5; weight--) {
+			int card;
+			if (weight == 1) {
+				card = 140 + suit;
+			}
+			else {
+				card = weight * 10 + suit;
+			}
+			if (card == inHandCards[0] || card == inHandCards[1]) {
+				ratioCombo.kind = 2;
+				break;
+			}
+		}
+	}
+	else if (ratioCombo.value.type == 8) {
+		for (int i = 0; i < 2; i++) {
+			if (ratioCombo.value.items[0] == (int)(inHandCards[i] / 10)) {
+				ratioCombo.kind = 2;
+				break;
+			}
+		}
+	}
+
+	return ratioCombo;
 }
 
 
@@ -314,8 +372,36 @@ PyObject* cfinder(PyObject* self, PyObject* args) {
 }
 
 
+PyObject* ratio_cfinder(PyObject* self, PyObject* args) {
+    PyObject * cardsList;
+    PyArg_ParseTuple(args, "O", &cardsList);
+    int n = PyList_Size(cardsList), cardsArray[7];
+
+    for (int i = 0; i < n; i++) {
+        int card = PyLong_AsSsize_t(PyList_GetItem(cardsList, i));
+        cardsArray[i] = card;
+    }
+
+    struct RatioCombo ratioCombo = ratioComboFinder(cardsArray, n);
+
+    PyObject* result = PyList_New(2);
+
+    PyObject* comboList = PyList_New(ratioCombo.value.itemsCount + 1);
+    PyList_SetItem(comboList, 0, Py_BuildValue("i", ratioCombo.value.type));
+    for (int i = 1; i < ratioCombo.value.itemsCount + 1; i++) {
+        PyList_SetItem(comboList, i, Py_BuildValue("i", ratioCombo.value.items[i - 1]));
+    }
+
+    PyList_SetItem(result, 0, comboList);
+    PyList_SetItem(result, 1, Py_BuildValue("i", ratioCombo.kind));
+
+    return result;
+}
+
+
 static PyMethodDef methods[] = {
     {"cfinder", cfinder, METH_VARARGS, "Combination finder."},
+    {"ratio_cfinder", ratio_cfinder, METH_VARARGS, "Combination finder with ratio."},
     {NULL, NULL, 0, NULL}
 };
 
