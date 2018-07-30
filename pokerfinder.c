@@ -337,8 +337,58 @@ struct RatioCombo ratioComboFinder(int *ratioCards, int count) {
 		}
 	}
 	else if (ratioCombo.value.type == 8) {
+		if (ratioCombo.value.items[0] == (int)(inHandCards[0] / 10) || ratioCombo.value.items[0] == (int)(inHandCards[1] / 10)) {
+			ratioCombo.kind = 2;
+		}
+	}
+	else if (ratioCombo.value.type == 7) {
 		for (int i = 0; i < 2; i++) {
-			if (ratioCombo.value.items[0] == (int)(inHandCards[i] / 10)) {
+			int handCardWeight = (int)(inHandCards[i] / 10);
+			if (ratioCombo.value.items[0] == handCardWeight || ratioCombo.value.items[1] == handCardWeight) {
+				ratioCombo.kind++;
+			}
+		}
+	}
+	else if (ratioCombo.value.type == 6) {
+		for (int i = 0; i < 5; i++) {
+			if (ratioCombo.value.items[i] == (int)(inHandCards[0] / 10) || ratioCombo.value.items[i] == (int)(inHandCards[1] / 10)) {
+				ratioCombo.kind = 2;
+				break;
+			}
+		}
+	}
+	else if (ratioCombo.value.type == 5) {
+		for (int weight = ratioCombo.value.items[0]; weight > ratioCombo.value.items[0] - 5; weight--) {
+			if (weight == 1) {
+				weight = 14;
+			}
+			if (weight == (int)(inHandCards[0] / 10) || weight == (int)(inHandCards[1] / 10)) {
+				ratioCombo.kind = 2;
+				break;
+			}
+		}
+	}
+	else if (ratioCombo.value.type == 4) {
+		if (ratioCombo.value.items[0] == (int)(inHandCards[0] / 10) || ratioCombo.value.items[0] == (int)(inHandCards[1] / 10)) {
+			ratioCombo.kind = 2;
+		}
+	}
+	else if (ratioCombo.value.type == 3) {
+		for (int i = 0; i < 2; i++) {
+			int handCardWeight = (int)(inHandCards[i] / 10);
+			if (ratioCombo.value.items[0] == handCardWeight || ratioCombo.value.items[1] == handCardWeight) {
+				ratioCombo.kind++;
+			}
+		}
+	}
+	else if (ratioCombo.value.type == 2) {
+		if (ratioCombo.value.items[0] == (int)(inHandCards[0] / 10) || ratioCombo.value.items[0] == (int)(inHandCards[1] / 10)) {
+			ratioCombo.kind = 2;
+		}
+	}
+	else {
+		for (int i = 0; i < 5; i++) {
+			if (ratioCombo.value.items[i] == (int)(inHandCards[0] / 10) || ratioCombo.value.items[i] == (int)(inHandCards[1] / 10)) {
 				ratioCombo.kind = 2;
 				break;
 			}
