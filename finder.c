@@ -399,7 +399,7 @@ struct RatioCombo ratioComboFinder(int *ratioCards, int count) {
 }
 
 
-PyObject* cfinder(PyObject* self, PyObject* args) {
+PyObject* findCombo(PyObject* self, PyObject* args) {
     PyObject * cardsList;
     PyArg_ParseTuple(args, "O", &cardsList);
     int n = PyList_Size(cardsList), cardsArray[7];
@@ -422,7 +422,7 @@ PyObject* cfinder(PyObject* self, PyObject* args) {
 }
 
 
-PyObject* ratio_cfinder(PyObject* self, PyObject* args) {
+PyObject* findRatioCombo(PyObject* self, PyObject* args) {
     PyObject * cardsList;
     PyArg_ParseTuple(args, "O", &cardsList);
     int n = PyList_Size(cardsList), cardsArray[7];
@@ -450,8 +450,8 @@ PyObject* ratio_cfinder(PyObject* self, PyObject* args) {
 
 
 static PyMethodDef methods[] = {
-    {"cfinder", cfinder, METH_VARARGS, "Combination finder."},
-    {"ratio_cfinder", ratio_cfinder, METH_VARARGS, "Combination finder with ratio."},
+    {"findCombo", findCombo, METH_VARARGS, "Find out combination kind."},
+    {"findRatioCombo", findRatioCombo, METH_VARARGS, "Find out combination kind with ratio."},
     {NULL, NULL, 0, NULL}
 };
 
@@ -459,7 +459,7 @@ static PyMethodDef methods[] = {
 static struct PyModuleDef definition = {
     PyModuleDef_HEAD_INIT,
     "cthpoker",
-    "Texas Hold'em poker combination finder by C code.",
+    "Texas Hold'em poker combination finder.",
     -1,
     methods
 };
