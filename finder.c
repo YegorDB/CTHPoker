@@ -152,7 +152,7 @@ struct Combo comboGetter(struct Repetitions repetitions, int count) {
 
 	if (repetitions.suits.max < 5) {
 		if (repetitions.weights.max == 4) {
-			printf("four of a kind\n");
+			// printf("four of a kind\n");
 			combo.type = 8;
 			combo.items[0] = repetitions.weights.repeats[3][0];
 			if (count == 4) {
@@ -164,7 +164,7 @@ struct Combo comboGetter(struct Repetitions repetitions, int count) {
 			}
 		}
 		else if (repetitions.weights.max == 3 && (repetitions.weights.repeatsCount[1] > 0 || repetitions.weights.repeatsCount[2] == 2)) {
-			printf("full house\n");
+			// printf("full house\n");
 			combo.type = 7;
 			combo.itemsCount = 2;
 			if (repetitions.weights.repeatsCount[2] == 2) {
@@ -179,13 +179,13 @@ struct Combo comboGetter(struct Repetitions repetitions, int count) {
 		else {
 			int straightMax = getStraightMax(repetitions.weights.allUnique, repetitions.weights.uniqueCount);
 			if (straightMax != -1) {
-				printf("straight\n");
+				// printf("straight\n");
 				combo.type = 5;
 				combo.itemsCount = 1;
 				combo.items[0] = straightMax;
 			}
 			else if (repetitions.weights.max == 3) {
-				printf("three of a kind\n");
+				// printf("three of a kind\n");
 				combo.type = 4;
 				if (count < 5) {
 					combo.itemsCount = count - 2;
@@ -199,7 +199,7 @@ struct Combo comboGetter(struct Repetitions repetitions, int count) {
 				}
 			}
 			else if (repetitions.weights.repeatsCount[1] == 2) {
-				printf("two pairs\n");
+				// printf("two pairs\n");
 				combo.type = 3;
 				combo.items[0] = repetitions.weights.repeats[1][1];
 				combo.items[1] = repetitions.weights.repeats[1][0];
@@ -212,7 +212,7 @@ struct Combo comboGetter(struct Repetitions repetitions, int count) {
 				}
 			}
 			else if (repetitions.weights.max == 2) {
-				printf("one pair\n");
+				// printf("one pair\n");
 				combo.type = 2;
 				if (count < 5) {
 					combo.itemsCount = count - 1;
@@ -226,7 +226,7 @@ struct Combo comboGetter(struct Repetitions repetitions, int count) {
 				}
 			}
 			else {
-				printf("high card\n");
+				// printf("high card\n");
 				combo.type = 1;
 				if (count < 5) {
 					combo.itemsCount = count;
@@ -245,13 +245,13 @@ struct Combo comboGetter(struct Repetitions repetitions, int count) {
 			repetitions.suits.repeats[repetitions.suits.max - 1][0], repetitions.weights.all, repetitions.suits.all, count);
 		int straightMax = getStraightMax(filteredCards.items, filteredCards.count);
 		if (straightMax != - 1) {
-			printf("straight flush\n");
+			// printf("straight flush\n");
 			combo.type = 9;
 			combo.itemsCount = 1;
 			combo.items[0] = straightMax;
 		}
 		else {
-			printf("flush\n");
+			// printf("flush\n");
 			combo.type = 6;
 			if (filteredCards.count < 5) {
 				combo.itemsCount = filteredCards.count;
