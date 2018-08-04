@@ -302,7 +302,9 @@ int * cardsFromRatio(int *ratioCards, int count) {
 
 
 int * getInHandCards(int *ratioCards, int count) {
-	static int result[2], inCount = 0;
+	static int result[2];
+	int inCount = 0;
+
 	for (int i = 0; i < count; i++) {
 		if ((int)(ratioCards[i] / 1000) == 1) {
 			result[inCount] = ratioCards[i] - ((int)(ratioCards[i] / 1000)) * 1000;
@@ -363,8 +365,9 @@ struct RatioCombo ratioComboFinder(int *ratioCards, int count) {
 		}
 	}
 	else if (ratioCombo.value.type == 6) {
+		int suit = repetitions.suits.repeats[repetitions.suits.max - 1][0];
 		for (int i = 0; i < 5; i++) {
-			if (ratioCombo.value.items[i] == (int)(inHandCards[0] / 10) || ratioCombo.value.items[i] == (int)(inHandCards[1] / 10)) {
+			if (ratioCombo.value.items[i] * 10 + suit == inHandCards[0] || ratioCombo.value.items[i] * 10 + suit == inHandCards[1]) {
 				ratioCombo.kind = 2;
 				break;
 			}

@@ -69,5 +69,35 @@ class TestFindCombo:
 
     @pytest.mark.parametrize("values", variants)
     @get_parameters
-    def test_find_combo(self, cards, value):
+    def test_all_values(self, cards, value):
         assert findCombo(cards) == value
+
+
+class TestFindRatioCombo:
+    variants = [
+        {'cards': [114, 104, 94, 84, 21, 1124, 1101], 'value': [9, 12], 'kind': 2},
+        {'cards': [104, 94, 84, 74, 64, 1141, 1051], 'value': [9, 10], 'kind': 0},
+        {'cards': [134, 132, 133, 131, 74, 1144, 1022], 'value': [8, 13, 14], 'kind': 0},
+        {'cards': [134, 144, 123, 121, 22, 1124, 1122], 'value': [8, 12, 14], 'kind': 2},
+        {'cards': [112, 132, 113, 134, 52, 1131, 1114], 'value': [7, 13, 11], 'kind': 2},
+        {'cards': [114, 112, 102, 104, 82, 1101, 1083], 'value': [7, 10, 11], 'kind': 1},
+        {'cards': [114, 51, 112, 54, 52, 1092, 1134], 'value': [7, 5, 11], 'kind': 0},
+        {'cards': [74, 54, 44, 34, 24, 1094, 1084], 'value': [6, 9, 8, 7, 5, 4], 'kind': 2},
+        {'cards': [74, 54, 44, 34, 24, 1123, 1021], 'value': [6, 7, 5, 4, 3, 2], 'kind': 0},
+        {'cards': [63, 54, 41, 32, 23, 1081, 1072], 'value': [5, 8], 'kind': 2},
+        {'cards': [64, 51, 42, 31, 23, 1114, 1113], 'value': [5, 6], 'kind': 0},
+        {'cards': [122, 113, 111, 92, 52, 1132, 1114], 'value': [4, 11, 13, 12], 'kind': 2},
+        {'cards': [42, 34, 33, 31, 22, 1074, 1052], 'value': [4, 3, 7, 5], 'kind': 0},
+        {'cards': [113, 132, 101, 92, 34, 1111, 1093], 'value': [3, 11, 9, 13], 'kind': 2},
+        {'cards': [104, 93, 92, 74, 53, 1101, 1051], 'value': [3, 10, 9, 7], 'kind': 1},
+        {'cards': [51, 53, 43, 42, 31, 1034, 1024], 'value': [3, 5, 4, 3], 'kind': 0},
+        {'cards': [143, 112, 104, 63, 43, 1083, 1081], 'value': [2, 8, 14, 11, 10], 'kind': 2},
+        {'cards': [112, 104, 63, 51, 53, 1131, 1123], 'value': [2, 5, 13, 12, 11], 'kind': 0},
+        {'cards': [134, 122, 94, 73, 23, 1052, 1041], 'value': [1, 13, 12, 9, 7, 5], 'kind': 2},
+        {'cards': [141, 104, 93, 72, 54, 1043, 1031], 'value': [1, 14, 10, 9, 7, 5], 'kind': 0},
+    ]
+
+    @pytest.mark.parametrize("values", variants)
+    @get_parameters
+    def test_all_values(self, cards, value, kind):
+        assert findRatioCombo(cards) == [value, kind]
