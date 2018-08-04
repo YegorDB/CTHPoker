@@ -160,7 +160,12 @@ struct Combo comboGetter(struct Repetitions repetitions, int count) {
 			}
 			else {
 				combo.itemsCount = 2;
-				combo.items[1] = repetitions.weights.repeats[0][count - 5];
+				if (repetitions.weights.allUnique[repetitions.weights.uniqueCount - 1] == combo.items[0]) {
+					combo.items[1] = repetitions.weights.allUnique[repetitions.weights.uniqueCount - 2];
+				}
+				else {
+					combo.items[1] = repetitions.weights.allUnique[repetitions.weights.uniqueCount - 1];
+				}
 			}
 		}
 		else if (repetitions.weights.max == 3 && (repetitions.weights.repeatsCount[1] > 0 || repetitions.weights.repeatsCount[2] == 2)) {
@@ -198,17 +203,25 @@ struct Combo comboGetter(struct Repetitions repetitions, int count) {
 					combo.items[i] = repetitions.weights.repeats[0][count - i - 3];
 				}
 			}
-			else if (repetitions.weights.repeatsCount[1] == 2) {
+			else if (repetitions.weights.repeatsCount[1] > 1) {
 				// printf("two pairs\n");
 				combo.type = 3;
-				combo.items[0] = repetitions.weights.repeats[1][1];
-				combo.items[1] = repetitions.weights.repeats[1][0];
+				combo.items[0] = repetitions.weights.repeats[1][repetitions.weights.repeatsCount[1] - 1];
+				combo.items[1] = repetitions.weights.repeats[1][repetitions.weights.repeatsCount[1] - 2];
 				if (count == 4) {
 					combo.itemsCount = 2;
 				}
 				else {
 					combo.itemsCount = 3;
-					combo.items[2] = repetitions.weights.repeats[0][count - 5];
+					if (repetitions.weights.allUnique[repetitions.weights.uniqueCount - 1] != combo.items[0] && repetitions.weights.allUnique[repetitions.weights.uniqueCount - 1] != combo.items[1]) {
+						combo.items[2] = repetitions.weights.allUnique[repetitions.weights.uniqueCount - 1];
+					}
+					else if (repetitions.weights.allUnique[repetitions.weights.uniqueCount - 2] != combo.items[0] && repetitions.weights.allUnique[repetitions.weights.uniqueCount - 2] != combo.items[1]) {
+						combo.items[2] = repetitions.weights.allUnique[repetitions.weights.uniqueCount - 2];
+					}
+					else {
+						combo.items[2] = repetitions.weights.allUnique[repetitions.weights.uniqueCount - 3];
+					}
 				}
 			}
 			else if (repetitions.weights.max == 2) {
