@@ -3,7 +3,7 @@
 ## Install
 
 ```
-pip install СTHPoker
+pip install CTHPoker
 ```
 
 ## Usage

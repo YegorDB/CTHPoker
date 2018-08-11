@@ -489,7 +489,7 @@ static PyMethodDef methods[] = {
 
 static struct PyModuleDef definition = {
     PyModuleDef_HEAD_INIT,
-    "CTHPoker",
+    "cthpoker",
     "Texas Hold'em poker combination finder.",
     -1,
     methods

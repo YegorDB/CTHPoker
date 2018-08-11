@@ -16,17 +16,10 @@
 from distutils.core import setup, Extension
 
 
-with open("README.md", "r") as f:
-    long_description = f.read()
-f.close()
-
-
 setup(
     name='CTHPoker',
-    version='1.0.0',
+    version='1.0.2',
     description="Texas Hold'em Poker combination finder tool",
-    long_description=long_description,
-    long_description_content_type="text/markdown",
     url='https://github.com/YegorDB/CTHPoker',
     author='Yegor Bitensky',
     classifiers=[
@@ -38,5 +31,5 @@ setup(
         "License :: OSI Approved :: Apache Software License",
         "Programming Language :: C",
     ],
-    ext_modules=[Extension('CTHPoker', ['finder.c'])]
+    ext_modules=[Extension('cthpoker', ['finder.c'])]
 )
