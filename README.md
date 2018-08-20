@@ -144,3 +144,6 @@ print(combo)
 print(ratio)
 # 0
 ```
+
+## License
+[Apache License](https://choosealicense.com/licenses/apache-2.0/)
