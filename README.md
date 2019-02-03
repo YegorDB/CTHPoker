@@ -26,15 +26,7 @@ First number is type of combination: `1` (High card), `2` (One pair), `3` (Two p
 
 Other numbers is combination value.
 
-`[1, 12, 10, 7, 6, 4]` is high card of Queen with Ten, Seven, Six and Four
-`[2, 9, 13, 8, 5]` is one pair of Nine with King, Eight and Five
-`[3, 11, 3, 9]` is two pairs of Jakes and Three with Nine
-`[4, 2, 14, 10]` is three of a kind of Deuce with Ace and Ten
-`[5, 6]` is straight of Six, Five, Four, Three and Two
-`[6, 10, 9, 6, 4, 2]` is flush of Ten, Nine, Six, Four and Two
-`[7, 3, 6]` is full house of Three and Six
-`[8, 7, 12]` is four of a kind of Seven with Queen
-`[9, 10]` is straightFlush of Ten, Nine, Eight, Seven and Six
+`[1, 12, 10, 7, 6, 4]` is high card of Queen with Ten, Seven, Six and Four; `[2, 9, 13, 8, 5]` is one pair of Nine with King, Eight and Five; `[3, 11, 3, 9]` is two pairs of Jakes and Three with Nine; `[4, 2, 14, 10]` is three of a kind of Deuce with Ace and Ten; `[5, 6]` is straight of Six, Five, Four, Three and Two; `[6, 10, 9, 6, 4, 2]` is flush of Ten, Nine, Six, Four and Two; `[7, 3, 6]` is full house of Three and Six; `[8, 7, 12]` is four of a kind of Seven with Queen; `[9, 10]` is straightFlush of Ten, Nine, Eight, Seven and Six.
 
 ### Find pure combination
 
