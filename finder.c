@@ -1,4 +1,4 @@
-// Copyright 2018 Yegor Bitensky
+// Copyright 2019 Yegor Bitensky
 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -349,11 +349,15 @@ struct RatioCombo ratioComboFinder(int *ratioCards, int count) {
 	ratioCombo.value = comboGetter(repetitions, count);
 
 	int *inHandCards = getInHandCards(ratioCards, count);
+	int inHandWeights[2];
+
+	for (int i = 0; i < 2; i++) {
+		inHandWeights[i] = (int)(inHandCards[i] / 10);
+	}
 
 	if (ratioCombo.value.type == 9) {
-		int suit = repetitions.suits.repeats[repetitions.suits.max - 1][0];
+		int card, suit = repetitions.suits.repeats[repetitions.suits.max - 1][0];
 		for (int weight = ratioCombo.value.items[0]; weight > ratioCombo.value.items[0] - 5; weight--) {
-			int card;
 			if (weight == 1) {
 				card = 140 + suit;
 			}
@@ -367,14 +371,13 @@ struct RatioCombo ratioComboFinder(int *ratioCards, int count) {
 		}
 	}
 	else if (ratioCombo.value.type == 8) {
-		if (ratioCombo.value.items[0] == (int)(inHandCards[0] / 10) || ratioCombo.value.items[0] == (int)(inHandCards[1] / 10)) {
+		if (ratioCombo.value.items[0] == inHandWeights[0] || ratioCombo.value.items[0] == inHandWeights[1]) {
 			ratioCombo.kind = 2;
 		}
 	}
 	else if (ratioCombo.value.type == 7) {
 		for (int i = 0; i < 2; i++) {
-			int handCardWeight = (int)(inHandCards[i] / 10);
-			if (ratioCombo.value.items[0] == handCardWeight || ratioCombo.value.items[1] == handCardWeight) {
+			if (ratioCombo.value.items[0] == inHandWeights[i] || ratioCombo.value.items[1] == inHandWeights[i]) {
 				ratioCombo.kind++;
 			}
 		}
@@ -389,37 +392,40 @@ struct RatioCombo ratioComboFinder(int *ratioCards, int count) {
 		}
 	}
 	else if (ratioCombo.value.type == 5) {
+		int toCompare;
 		for (int weight = ratioCombo.value.items[0]; weight > ratioCombo.value.items[0] - 5; weight--) {
 			if (weight == 1) {
-				weight = 14;
+				toCompare = 14;
 			}
-			if (weight == (int)(inHandCards[0] / 10) || weight == (int)(inHandCards[1] / 10)) {
+			else {
+				toCompare = weight;
+			}
+			if (toCompare == inHandWeights[0] || toCompare == inHandWeights[1]) {
 				ratioCombo.kind = 2;
 				break;
 			}
 		}
 	}
 	else if (ratioCombo.value.type == 4) {
-		if (ratioCombo.value.items[0] == (int)(inHandCards[0] / 10) || ratioCombo.value.items[0] == (int)(inHandCards[1] / 10)) {
+		if (ratioCombo.value.items[0] == inHandWeights[0] || ratioCombo.value.items[0] == inHandWeights[1]) {
 			ratioCombo.kind = 2;
 		}
 	}
 	else if (ratioCombo.value.type == 3) {
 		for (int i = 0; i < 2; i++) {
-			int handCardWeight = (int)(inHandCards[i] / 10);
-			if (ratioCombo.value.items[0] == handCardWeight || ratioCombo.value.items[1] == handCardWeight) {
+			if (ratioCombo.value.items[0] == inHandWeights[i] || ratioCombo.value.items[1] == inHandWeights[i]) {
 				ratioCombo.kind++;
 			}
 		}
 	}
 	else if (ratioCombo.value.type == 2) {
-		if (ratioCombo.value.items[0] == (int)(inHandCards[0] / 10) || ratioCombo.value.items[0] == (int)(inHandCards[1] / 10)) {
+		if (ratioCombo.value.items[0] == inHandWeights[0] || ratioCombo.value.items[0] == inHandWeights[1]) {
 			ratioCombo.kind = 2;
 		}
 	}
 	else {
 		for (int i = 0; i < 5; i++) {
-			if (ratioCombo.value.items[i] == (int)(inHandCards[0] / 10) || ratioCombo.value.items[i] == (int)(inHandCards[1] / 10)) {
+			if (ratioCombo.value.items[i] == inHandWeights[0] || ratioCombo.value.items[i] == inHandWeights[1]) {
 				ratioCombo.kind = 2;
 				break;
 			}

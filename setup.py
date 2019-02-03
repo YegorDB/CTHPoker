@@ -1,4 +1,4 @@
-# Copyright 2018 Yegor Bitensky
+# Copyright 2019 Yegor Bitensky
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ from distutils.core import setup, Extension
 
 setup(
     name='CTHPoker',
-    version='1.0.2',
+    version='1.0.3',
     description="Texas Hold'em Poker combination finder tool",
     url='https://github.com/YegorDB/CTHPoker',
     author='Yegor Bitensky',

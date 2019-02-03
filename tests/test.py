@@ -1,4 +1,4 @@
-# Copyright 2018 Yegor Bitensky
+# Copyright 2019 Yegor Bitensky
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -92,6 +92,8 @@ class TestFindRatioCombo:
     variants = [
         {'cards': [114, 104, 94, 84, 21, 1124, 1101], 'value': [9, 12], 'kind': 2},
         {'cards': [104, 94, 84, 74, 64, 1141, 1051], 'value': [9, 10], 'kind': 0},
+        {'cards': [143, 21, 31, 41, 51, 1141, 1082], 'value': [9, 5], 'kind': 2},
+        {'cards': [141, 21, 31, 41, 51, 1142, 1134], 'value': [9, 5], 'kind': 0},
         {'cards': [134, 132, 133, 131, 74, 1144, 1022], 'value': [8, 13, 14], 'kind': 0},
         {'cards': [134, 144, 123, 121, 22, 1124, 1122], 'value': [8, 12, 14], 'kind': 2},
         {'cards': [112, 132, 113, 134, 52, 1131, 1114], 'value': [7, 13, 11], 'kind': 2},
@@ -101,6 +103,8 @@ class TestFindRatioCombo:
         {'cards': [74, 54, 44, 34, 24, 1123, 1021], 'value': [6, 7, 5, 4, 3, 2], 'kind': 0},
         {'cards': [63, 54, 41, 32, 23, 1081, 1072], 'value': [5, 8], 'kind': 2},
         {'cards': [64, 51, 42, 31, 23, 1114, 1113], 'value': [5, 6], 'kind': 0},
+        {'cards': [142, 24, 31, 41, 53, 1144, 1101], 'value': [5, 5], 'kind': 2},
+        {'cards': [142, 24, 31, 41, 53, 1104, 1101], 'value': [5, 5], 'kind': 0},
         {'cards': [122, 113, 111, 92, 52, 1132, 1114], 'value': [4, 11, 13, 12], 'kind': 2},
         {'cards': [42, 34, 33, 31, 22, 1074, 1052], 'value': [4, 3, 7, 5], 'kind': 0},
         {'cards': [113, 132, 101, 92, 34, 1111, 1093], 'value': [3, 11, 9, 13], 'kind': 2},
